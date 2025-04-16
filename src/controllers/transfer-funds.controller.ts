@@ -5,13 +5,15 @@ import { TransferFundsService } from 'src/services/transfer-funds.service';
 import { AppResponse } from 'src/core/app_response';
 import * as AppConsts from 'src/core/app_consts';
 import * as AppErrs from 'src/core/app_errors';
+import { ContractService } from 'src/services/contract.service';
 
 
 @Controller('transfer_funds')
 export class TransferFundsController {
 
     constructor(
-        private readonly transferFundsService: TransferFundsService,
+      private readonly contractService: ContractService,
+      private readonly transferFundsService: TransferFundsService,
     ){}
 
 
@@ -20,7 +22,7 @@ export class TransferFundsController {
       try {
 
         // fetch abi
-        const abi = await this.transferFundsService.fetchABI(address);
+        const abi = await this.contractService.fetchABI(address);
         console.log('abi::::::')
         console.log(abi)
 
