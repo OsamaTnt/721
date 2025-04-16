@@ -23,7 +23,7 @@ export class TransferFundsService implements OnModuleInit{
             process.env.TRANSFER_FUNDS_CONTRACT_ADDRESS,
         );
     
-        console.log('Contracts has been initialized');
+        console.log('TransferFundsContract has been initialized');
     
     }
 
@@ -104,5 +104,4 @@ export class TransferFundsService implements OnModuleInit{
   
 
 }
-
 
