@@ -18,7 +18,7 @@ export class TransferFundsService implements OnModuleInit{
     async onModuleInit() {
     
         // Set up the provider
-        this.provider = new ethers.JsonRpcProvider(process.env.POLYGON_NODE_URL);
+        this.provider = new ethers.JsonRpcProvider(process.env.INFURA_NODE_URL);
     
         // Initialize signer from private key
         this.signer = new ethers.Wallet(process.env.SYSTEM_WALLET_PRIVATE_KEY, this.provider);
@@ -35,10 +35,10 @@ export class TransferFundsService implements OnModuleInit{
         try {
     
             // get the abi from the network
-            const res = await axios.get(process.env.POLYSCAN_ABI_URL, {
+            const res = await axios.get(process.env.INFURA_NODE_URL, {
                 params: {
                   address: contractAddress as string,
-                  apikey: process.env.POLYSCAN_API_KEY,
+                  apikey: process.env.INFURA_API_KEY,
                 },
                 family: 4,
                 timeout: 60000,
