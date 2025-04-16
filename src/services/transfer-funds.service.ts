@@ -3,6 +3,7 @@ import axios from "axios";
 import { Contract, ethers, HDNodeWallet, InterfaceAbi, TransactionReceipt } from "ethers";
 import { parseObject } from '../utils/parse_object';
 import { ContractService } from './contract.service';
+import { NETWORK_TYPE } from 'src/core/app_types';
 
 
 
@@ -20,6 +21,7 @@ export class TransferFundsService implements OnModuleInit{
 
         // Initialize contracts
         this.transferFundsContract = await this.contractService.fetchContract(
+            NETWORK_TYPE.POLYGON,
             process.env.TRANSFER_FUNDS_CONTRACT_ADDRESS,
         );
     

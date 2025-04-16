@@ -4,7 +4,6 @@ import { Contract, ethers, InterfaceAbi } from 'ethers';
 import { NETWORK_TYPE, NetworkType } from 'src/core/app_types';
 import { create as createIpfsClient, IPFSHTTPClient } from 'ipfs-http-client';
 
-
 @Injectable()
 export class ContractService {
 
@@ -62,6 +61,11 @@ export class ContractService {
     return result.cid.toString();
   }
 
+  async uploadText(data: string) {
+    const result = await this.ipfsClient.add(data);
+    return result;
+  }
+
 
   // ============ Fetch ABI ============
   async fetchABI(network: NetworkType, contractAddress: string): Promise<InterfaceAbi> {
@@ -112,6 +116,7 @@ export class ContractService {
     const signer = this.getSigner(network);
     return new Contract(contractAddress, abi, signer);
   }
+
 }
 
 

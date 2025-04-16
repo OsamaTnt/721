@@ -10,7 +10,6 @@ import { NETWORK_TYPE, NetworkType } from 'src/core/app_types';
 
 
 
-
 @Controller('transfer_funds')
 export class TransferFundsController {
 
