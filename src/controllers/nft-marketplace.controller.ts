@@ -1,4 +1,4 @@
-import { Controller, Get, Post, HttpException, HttpStatus, Query, Body } from '@nestjs/common';
+import { Controller, Get, Post, HttpException, HttpStatus, Query, Body, BadRequestException } from '@nestjs/common';
 import { STATUS_CODES } from "http";
 
 import { NftMarketplaceService } from 'src/services/nft-marketplace.service';
@@ -6,6 +6,7 @@ import { AppResponse } from 'src/core/app_response';
 import * as AppConsts from 'src/core/app_consts';
 import * as AppErrs from 'src/core/app_errors';
 import { ContractService } from 'src/services/contract.service';
+import { NETWORK_TYPE, NetworkType } from 'src/core/app_types';
 
 
 @Controller('nft-marketplace')
@@ -18,21 +19,33 @@ export class NftMarketplaceController {
 
 
     @Get('abi')
-    async fetchContractABI(@Query('address') address: string): Promise<AppResponse> {
+    async fetchContractABI(
+        @Query('network') network: string,
+        @Query('address') address: string,
+    ): Promise<AppResponse> {
         try {
 
-        // fetch abi
-        const abi = await this.contractService.fetchABI(address);
-        console.log('abi::::::')
-        console.log(abi)
+            // Convert network to lowercase for case-insensitive comparison
+            const selectedNetwork = network?.toLowerCase();
 
-        // return response
-        return new AppResponse({
-            status: STATUS_CODES[HttpStatus.OK],
-            code: HttpStatus.OK,
-            message: AppConsts.FETCHED,
-            data: abi,
-        });
+            // Validate network type
+            if (!selectedNetwork || !['polygon', 'ethereum'].includes(selectedNetwork)) {
+                throw new BadRequestException(AppErrs.ERR_NETWORK_NOT_SUPPORTED);
+            }
+
+            // fetch abi
+            const abi = await this.contractService.fetchABI(
+                selectedNetwork as NetworkType, 
+                address,
+            );
+
+            // return response
+            return new AppResponse({
+                status: STATUS_CODES[HttpStatus.OK],
+                code: HttpStatus.OK,
+                message: AppConsts.FETCHED,
+                data: abi,
+            });
 
         } catch (error: any) {
             throw new HttpException(

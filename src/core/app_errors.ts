@@ -15,3 +15,4 @@ export const ERR_TOKEN_EXPIRED = "payload token expired";
 
 export const ERR_INTERNAL_ERROR = "internal error";
 
+export const ERR_NETWORK_NOT_SUPPORTED = 'network not supported';

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, HttpException, HttpStatus, Query, Body } from '@nestjs/common';
+import { Controller, Get, Post, HttpException, HttpStatus, Query, Body, BadRequestException } from '@nestjs/common';
 import { STATUS_CODES } from "http";
 
 import { TransferFundsService } from 'src/services/transfer-funds.service';
@@ -6,6 +6,8 @@ import { AppResponse } from 'src/core/app_response';
 import * as AppConsts from 'src/core/app_consts';
 import * as AppErrs from 'src/core/app_errors';
 import { ContractService } from 'src/services/contract.service';
+import { NETWORK_TYPE, NetworkType } from 'src/core/app_types';
+
 
 
 
@@ -19,13 +21,25 @@ export class TransferFundsController {
 
 
     @Get('abi')
-    async fetchContractABI(@Query('address') address: string): Promise<AppResponse> {
+    async fetchContractABI(
+      @Query('network') network: string,
+      @Query('address') address: string,
+    ): Promise<AppResponse> {
       try {
 
+        // Convert network to lowercase for case-insensitive comparison
+        const selectedNetwork = network?.toLowerCase();
+
+        // Validate network type
+        if (!selectedNetwork || !['polygon', 'ethereum'].includes(selectedNetwork)) {
+            throw new BadRequestException(AppErrs.ERR_NETWORK_NOT_SUPPORTED);
+        }
+
         // fetch abi
-        const abi = await this.contractService.fetchABI(address);
-        console.log('abi::::::')
-        console.log(abi)
+        const abi = await this.contractService.fetchABI(
+          selectedNetwork as NetworkType, 
+          address,
+        );
 
         // return response
         return new AppResponse({
@@ -111,7 +125,11 @@ export class TransferFundsController {
       @Body('message') message: string
     ): Promise<AppResponse> {
       try {
-        const data = await this.transferFundsService.addDataToBlockchain(receiverAddr, amount, message);
+        const data = await this.transferFundsService.addDataToBlockchain(
+          receiverAddr, 
+          amount, 
+          message,
+        );
         console.log(data)
 
         // return response
@@ -136,4 +154,5 @@ export class TransferFundsController {
 
 
 }
+
 
