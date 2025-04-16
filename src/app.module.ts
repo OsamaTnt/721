@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from "@nestjs/config";
 
 import { TransferFundsModule } from './modules/transfer-funds.module';
+import { ContractServiceService } from './contract-service/contract-service.service';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { TransferFundsModule } from './modules/transfer-funds.module';
     TransferFundsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ContractServiceService],
 })
 export class AppModule {}
 
