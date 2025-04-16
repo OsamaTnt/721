@@ -1,6 +1,6 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import axios from "axios";
-import { Contract, ethers, HDNodeWallet, InterfaceAbi, TransactionReceipt } from "ethers";
+import { Contract, ethers, HDNodeWallet, InterfaceAbi } from "ethers";
 
 
 @Injectable()
