@@ -5,6 +5,7 @@ import { ConfigModule } from "@nestjs/config";
 
 import { TransferFundsModule } from './modules/transfer-funds.module';
 import { ContractServiceService } from './contract-service/contract-service.service';
+import { NftMarketplaceModule } from './nft-marketplace/nft-marketplace.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ContractServiceService } from './contract-service/contract-service.serv
       isGlobal: true,
   }),
     TransferFundsModule,
+    NftMarketplaceModule,
   ],
   controllers: [AppController],
   providers: [AppService, ContractServiceService],
