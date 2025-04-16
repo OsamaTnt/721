@@ -2,69 +2,14 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { Contract, ethers, InterfaceAbi } from 'ethers';
 import { NETWORK_TYPE, NetworkType } from 'src/core/app_types';
-import { create as createIpfsClient, IPFSHTTPClient } from 'ipfs-http-client';
+
+
 
 @Injectable()
 export class ContractService {
 
-  private ipfsClient: IPFSHTTPClient;
 
-  // infora credentials..
-  private projectId: String;
-  private secretKey: String;
-
-
-  constructor() {
-
-    // --- IPFS via Infura Setup ---
-    this.projectId = process.env.INFURA_PROJECT_ID;
-    this.secretKey = process.env.INFURA_SECRECT_KEY;
-
-    const auth =
-      'Basic ' +
-      Buffer.from(`${this.projectId}:${this.secretKey}`).toString('base64');
-
-    this.ipfsClient = createIpfsClient({
-      host: 'infura-ipfs.io',
-      port: 5001,
-      protocol: 'https',
-      headers: {
-        authorization: auth,
-      },
-    });
-  }
-
-
-  // ============ Dynamic Provider and Signer ============
-  private getProvider(network: NetworkType): ethers.JsonRpcProvider {
-    const url = network === NETWORK_TYPE.POLYGON? 
-        `https://polygon-mainnet.infura.io/v3/${this.projectId}`
-        : `https://mainnet.infura.io/v3/${this.projectId}`;
-
-    return new ethers.JsonRpcProvider(url);
-  }
-
-
-  private getSigner(network: NetworkType): ethers.Wallet {
-    const provider = this.getProvider(network);
-    return new ethers.Wallet(
-      process.env.SYSTEM_WALLET_PRIVATE_KEY,
-      provider,
-    );
-  }
-
-
-  // ============ IPFS Upload ============
-  async uploadToIPFS(content: string | Uint8Array | Blob): Promise<string> {
-    const result = await this.ipfsClient.add(content);
-    console.log('Uploaded to IPFS with CID:', result.cid.toString());
-    return result.cid.toString();
-  }
-
-  async uploadText(data: string) {
-    const result = await this.ipfsClient.add(data);
-    return result;
-  }
+  constructor() {}
 
 
   // ============ Fetch ABI ============
@@ -106,21 +51,23 @@ export class ContractService {
 
 
   // ============ Get Contract Instance ============
-  async fetchContract(network: NetworkType, contractAddress: string): Promise<Contract> {
+  async fetchContract(
+    network: NetworkType, 
+    contractAddress: string,
+    signer: ethers.Wallet,
+  ): Promise<Contract> {
     const abi = await this.fetchABI(network, contractAddress);
 
     if (!abi || !Array.isArray(abi)) {
       throw new Error('Invalid ABI: ABI is not an array.');
     }
 
-    const signer = this.getSigner(network);
+    // const signer = this.getSigner(network);
     return new Contract(contractAddress, abi, signer);
   }
 
+
 }
-
-
-
 
 
 
@@ -214,4 +161,5 @@ export class ContractService {
 
 
 // }
+
 

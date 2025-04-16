@@ -3,30 +3,56 @@ import axios from "axios";
 import { Contract, ethers, HDNodeWallet, InterfaceAbi, TransactionReceipt } from "ethers";
 import { parseObject } from '../utils/parse_object';
 import { ContractService } from './contract.service';
-import { NETWORK_TYPE } from 'src/core/app_types';
+import { NETWORK_TYPE, NetworkType } from 'src/core/app_types';
 
 
 
 @Injectable()
 export class TransferFundsService implements OnModuleInit{
-    
+
     private transferFundsContract: Contract;
-    
+    private provider: ethers.JsonRpcProvider;
+    private signer: ethers.Wallet;
+
     constructor(
         private readonly contractService: ContractService,
     ) {}
-    
+
 
     async onModuleInit() {
+
+        // Initialize the provider and signer
+        this.provider = this.getProvider(NETWORK_TYPE.POLYGON); // Polygon network
+        this.signer = this.getSigner(NETWORK_TYPE.POLYGON);
 
         // Initialize contracts
         this.transferFundsContract = await this.contractService.fetchContract(
             NETWORK_TYPE.POLYGON,
             process.env.TRANSFER_FUNDS_CONTRACT_ADDRESS,
+            this.signer,
         );
-    
+
         console.log('TransferFundsContract has been initialized');
-    
+
+    }
+
+
+    // ============ Dynamic Provider and Signer ============
+    private getProvider(network: NetworkType): ethers.JsonRpcProvider {
+        const url = network === NETWORK_TYPE.POLYGON? 
+        `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`
+        :`https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`;
+
+        return new ethers.JsonRpcProvider(url);
+    }
+
+
+    private getSigner(network: NetworkType): ethers.Wallet {
+        const provider = this.getProvider(network);
+        return new ethers.Wallet(
+        process.env.SYSTEM_WALLET_PRIVATE_KEY,
+        provider,
+        );
     }
 
 
@@ -45,12 +71,16 @@ export class TransferFundsService implements OnModuleInit{
             return parseObject(data);
 
         } catch (error) {
-            console.error('Error fetching All Transactions:', error.message);
+            console.error('Error fetching All Transactions:', error);
+            if (error instanceof Error) {
+                console.error('Error message:', error.message);
+            }
             throw error;
         }
     }
 
     
+
     //READ (GET - COST 0)
     async getTransactionCount(): Promise<any> {
         try {
@@ -70,6 +100,7 @@ export class TransferFundsService implements OnModuleInit{
             throw error;
         }
     }
+
 
 
     //WRITE (POST - COST GAS FEES)
@@ -104,6 +135,7 @@ export class TransferFundsService implements OnModuleInit{
         }
     }
   
+
 
 }
 
