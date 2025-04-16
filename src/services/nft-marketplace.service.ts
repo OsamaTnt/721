@@ -15,16 +15,17 @@ export class NftMarketplaceService {
         private readonly contractService: ContractService,
     ) {}
 
-    async onModuleInit() {
+    // async onModuleInit() {
 
-        // Initialize contracts
-        this.nftMarketplaceContract = await this.contractService.fetchContract(
-            process.env.NFT_MARKETPLACE_CONTRACT_ADDRESS,
-        );
+    //     // Initialize contracts
+    //     this.nftMarketplaceContract = await this.contractService.fetchContract(
+    //         process.env.NFT_MARKETPLACE_CONTRACT_ADDRESS,
+    //     );
     
-        console.log('NftMarketplaceContract has been initialized');
+    //     console.log('NftMarketplaceContract has been initialized');
     
-    }
+    // }
 
 
 }
+

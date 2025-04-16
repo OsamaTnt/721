@@ -8,6 +8,7 @@ import * as AppErrs from 'src/core/app_errors';
 import { ContractService } from 'src/services/contract.service';
 
 
+
 @Controller('transfer_funds')
 export class TransferFundsController {
 
@@ -135,5 +136,4 @@ export class TransferFundsController {
 
 
 }
-
 
