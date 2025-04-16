@@ -9,6 +9,8 @@ import { create as createIpfsClient, IPFSHTTPClient } from 'ipfs-http-client';
 export class ContractService {
 
   private ipfsClient: IPFSHTTPClient;
+
+  // infora credentials..
   private projectId: String;
   private secretKey: String;
 
@@ -16,8 +18,8 @@ export class ContractService {
   constructor() {
 
     // --- IPFS via Infura Setup ---
-    this.projectId = process.env.INFORA_PROJECT_ID;
-    this.secretKey = process.env.INFORA_SECRECT_KEY;
+    this.projectId = process.env.INFURA_PROJECT_ID;
+    this.secretKey = process.env.INFURA_SECRECT_KEY;
 
     const auth =
       'Basic ' +
