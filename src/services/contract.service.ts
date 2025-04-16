@@ -9,16 +9,19 @@ import { create as createIpfsClient, IPFSHTTPClient } from 'ipfs-http-client';
 export class ContractService {
 
   private ipfsClient: IPFSHTTPClient;
+  private projectId: String;
+  private secretKey: String;
 
 
   constructor() {
 
     // --- IPFS via Infura Setup ---
-    const projectId = process.env.INFORA_PROJECT_ID;
-    const projectSecret = process.env.INFORA_SECRECT_KEY;
+    this.projectId = process.env.INFORA_PROJECT_ID;
+    this.secretKey = process.env.INFORA_SECRECT_KEY;
+
     const auth =
       'Basic ' +
-      Buffer.from(`${projectId}:${projectSecret}`).toString('base64');
+      Buffer.from(`${this.projectId}:${this.secretKey}`).toString('base64');
 
     this.ipfsClient = createIpfsClient({
       host: 'infura-ipfs.io',
@@ -33,12 +36,9 @@ export class ContractService {
 
   // ============ Dynamic Provider and Signer ============
   private getProvider(network: NetworkType): ethers.JsonRpcProvider {
-    const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
-
-    const url =
-      network === NETWORK_TYPE.POLYGON
-        ? `https://polygon-mainnet.infura.io/v3/${projectId}`
-        : `https://mainnet.infura.io/v3/${projectId}`;
+    const url = network === NETWORK_TYPE.POLYGON? 
+        `https://polygon-mainnet.infura.io/v3/${this.projectId}`
+        : `https://mainnet.infura.io/v3/${this.projectId}`;
 
     return new ethers.JsonRpcProvider(url);
   }
